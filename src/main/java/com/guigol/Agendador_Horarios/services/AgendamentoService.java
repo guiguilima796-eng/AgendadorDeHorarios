@@ -5,6 +5,7 @@ import com.guigol.Agendador_Horarios.infrastructure.repository.AgendamentoReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -34,14 +35,24 @@ public class AgendamentoService {
 
     }
 
-    public Agendamento buscarAgendamentosDia(LocalDateTime data){
-        LocalDateTime primeiraHoraDia = data.toLocalDate().atStartOfDay();
-        LocalDateTime horaFinalDia = data.toLocalDate().atTime(23,59);
+    public Agendamento buscarAgendamentosDia(LocalDate data){
+        LocalDateTime primeiraHoraDia = data.atStartOfDay();
+        LocalDateTime horaFinalDia = data.atTime(23,59);
 
         return agendamentoRepository.findByDataHoraAgendamentoBetween(primeiraHoraDia,horaFinalDia);
 
     }
 
-    public  Agendamento
+    public  Agendamento alterarAgendamento(Agendamento agendamento,String cliente,LocalDateTime dataHoraAgendamento){
+        Agendamento agenda = agendamentoRepository.findByDataHoraAgendamentoBetween(dataHoraAgendamento,cliente);
+
+        if(Objects.nonNull(agenda)){
+            throw new RuntimeException("Horário não está preenchido");
+        }
+
+        agendamento.setId(agenda.getId());
+
+        return agendamentoRepository.save(agendamento);
+    }
 
 }
